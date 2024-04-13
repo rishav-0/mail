@@ -55,6 +55,6 @@ function send_emial(event){
 	.then(result => {
 		// Print result
 		console.log(result);
-		load_mailbox('sent');
+		load_mailbox('sent'); 
 	});
 }	

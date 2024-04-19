@@ -60,7 +60,8 @@ function view_mail(id) {
           <a href="#" class="btn btn-primary">Reply</a>
         </div>
      
-    `;
+      `;
+      //read status
       if (!email.read) {
         fetch(`/emails/${email.id}`, {
           method: "PUT",
@@ -69,8 +70,23 @@ function view_mail(id) {
           }),
         });
       }
+      const btnArch = document.createElement("button");
+      btnArch.innerHTML = email.archived ? "Unarchive" : "Archive";
+      btnArch.className = email.archived ? "btn btn-secondary" : "btn btn-dark";
+      btnArch.addEventListener("click", function () {
+        fetch(`/emails/${email.id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            archived: !email.archived,
+          }),
+        }).then(() => {
+          load_mailbox("inbox");
+        });
+      });
+
       // Append email details div to emails view
       document.querySelector("#emails-view").appendChild(emailDiv);
+      document.querySelector(".card-body").append(btnArch);
     });
 }
 

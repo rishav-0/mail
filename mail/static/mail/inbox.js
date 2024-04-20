@@ -57,10 +57,28 @@ function view_mail(id) {
           <h6 class="card-title">${email.subject}</h6>
           <p class="card-text">${email.body}</p>
           <p class="card-text">${email.timestamp}</p>
-          <a href="#" class="btn btn-primary">Reply</a>
         </div>
-     
       `;
+
+      //reply button
+      const reply = document.createElement("a");
+      reply.innerText = "Reply";
+      reply.href = "#";
+      reply.className = "btn btn-primary mr-2";
+      reply.addEventListener("click", function (event) {
+        event.preventDefault();
+        compose_email();
+        document.querySelector("#compose-recipients").value = email.sender;
+        let subject = email.subject;
+        if (!subject.startsWith("Re:")) {
+          subject = `Re: ${subject}`;
+        }
+        document.querySelector("#compose-subject").value = subject;
+        document.querySelector(
+          "#compose-body"
+        ).value = `On ${email.timestamp} ${email.sender} wrote ${email.body}`;
+      });
+
       //read status
       if (!email.read) {
         fetch(`/emails/${email.id}`, {
@@ -72,7 +90,9 @@ function view_mail(id) {
       }
       const btnArch = document.createElement("button");
       btnArch.innerHTML = email.archived ? "Unarchive" : "Archive";
-      btnArch.className = email.archived ? "btn btn-secondary" : "btn btn-dark";
+      btnArch.className = email.archived
+        ? "btn btn-secondary mr-2"
+        : "btn btn-dark mr-2";
       btnArch.addEventListener("click", function () {
         fetch(`/emails/${email.id}`, {
           method: "PUT",
@@ -86,6 +106,7 @@ function view_mail(id) {
 
       // Append email details div to emails view
       document.querySelector("#emails-view").appendChild(emailDiv);
+      emailDiv.querySelector(".card-body").appendChild(reply);
       document.querySelector(".card-body").append(btnArch);
     });
 }
